@@ -497,7 +497,7 @@
             <div class="upload-icon">📁</div>
             <div class="upload-text">Drop din lydfil her eller klik for at gennemse</div>
             <div class="upload-hint">Understøtter: WAV, MP3, MP4, M4A, FLAC, OGG, WEBM eller optag direkte</div>
-            <button class="btn" onclick="document.getElementById('fileInput').click()">
+            <button class="btn" onclick="selectFile(event)">
                 Vælg Fil
             </button>
             <div class="divider">eller</div>
@@ -664,6 +664,12 @@
         
         function hideError() {
             errorMessage.style.display = 'none';
+        }
+        
+        function selectFile(event) {
+            // Prevent the click from bubbling up to the upload area
+            event.stopPropagation();
+            document.getElementById('fileInput').click();
         }
         
         function copyTranscription() {
