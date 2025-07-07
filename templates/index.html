@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tale Transskription Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8eaff;
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .upload-text {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .transcription-text {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+        
+        .file-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .file-size {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            background: #ffeaea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #f5b2b2;
+            display: none;
+        }
+        
+        .status-message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+        
+        .copy-btn {
+            background: #27ae60;
+            font-size: 0.9em;
+            padding: 8px 16px;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #219a52;
+        }
+        
+        .divider {
+            margin: 20px 0;
+            color: #999;
+            font-size: 0.9em;
+            position: relative;
+        }
+        
+        .divider:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .divider:after {
+            content: 'eller';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f8f9ff;
+            padding: 0 15px;
+            z-index: 2;
+        }
+        
+        .record-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .record-btn:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+        }
+        
+        .record-btn.recording {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .recording-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+        
+        .recording-time {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .recording-level {
+            width: 100%;
+            height: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .recording-level-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+            border-radius: 4px;
+            transition: width 0.1s ease;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .upload-area {
+                padding: 40px 15px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+                margin: 5px;
+            }
+            
+            .recording-info {
+                padding: 10px;
+            }
+            
+            .recording-time {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Tale Transskription</h1>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Drop din lydfil her eller klik for at gennemse</div>
+            <div class="upload-hint">Understøtter: WAV, MP3, MP4, M4A, FLAC, OGG, WEBM eller optag direkte</div>
+            <button class="btn" onclick="document.getElementById('fileInput').click()">
+                Vælg Fil
+            </button>
+            <div class="divider">eller</div>
+            <button class="btn record-btn" id="recordBtn" onclick="toggleRecording()">
+                🎤 Start Optagelse
+            </button>
+        </div>
+        
+        <input type="file" id="fileInput" accept=".wav,.mp3,.mp4,.m4a,.flac,.ogg,.webm" />
+        
+        <div class="recording-info" id="recordingInfo">
+            <div class="recording-time" id="recordingTime">00:00</div>
+            <div class="recording-level">
+                <div class="recording-level-fill" id="recordingLevelFill"></div>
+            </div>
+            <button class="btn" onclick="stopRecording()">
+                🛑 Stop Optagelse
+            </button>
+        </div>
+        
+        <div class="file-info" id="fileInfo">
+            <div class="file-name" id="fileName"></div>
+            <div class="file-size" id="fileSize"></div>
+        </div>
+        
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="status-message" id="statusMessage"></div>
+        
+        <div class="result-area" id="resultArea">
+            <div class="result-title">Transskription Resultat:</div>
+            <div class="transcription-text" id="transcriptionText"></div>
+            <button class="btn copy-btn" onclick="copyTranscription()">
+                📋 Kopier Tekst
+            </button>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const statusMessage = document.getElementById('statusMessage');
+        const resultArea = document.getElementById('resultArea');
+        const transcriptionText = document.getElementById('transcriptionText');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Recording elements
+        const recordBtn = document.getElementById('recordBtn');
+        const recordingInfo = document.getElementById('recordingInfo');
+        const recordingTime = document.getElementById('recordingTime');
+        const recordingLevelFill = document.getElementById('recordingLevelFill');
+        
+        // Recording state
+        let mediaRecorder = null;
+        let recordingChunks = [];
+        let recordingStartTime = 0;
+        let recordingInterval = null;
+        let audioContext = null;
+        let analyser = null;
+        let microphone = null;
+        let isRecording = false;
+        
+        // File upload handlers
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            // Reset UI
+            hideError();
+            resultArea.style.display = 'none';
+            
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            fileInfo.style.display = 'block';
+            
+            // Start upload
+            uploadFile(file);
+        }
+        
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                // Show progress
+                progressBar.style.display = 'block';
+                statusMessage.textContent = 'Uploader og behandler...';
+                
+                // Simulate progress (since we can't track real upload progress with fetch)
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 30;
+                    if (progress > 90) progress = 90;
+                    progressFill.style.width = progress + '%';
+                }, 500);
+                
+                const response = await fetch('/transcribe', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Upload fejlede');
+                }
+                
+                const result = await response.json();
+                
+                // Hide progress, show result
+                progressBar.style.display = 'none';
+                statusMessage.textContent = '';
+                
+                transcriptionText.textContent = result.transcription;
+                resultArea.style.display = 'block';
+                
+            } catch (error) {
+                // Hide progress, show error
+                progressBar.style.display = 'none';
+                statusMessage.textContent = '';
+                showError(error.message || 'Der opstod en fejl under transskription');
+            }
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        function copyTranscription() {
+            const text = transcriptionText.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Kopieret!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+        
+        // Recording functions
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+        
+        async function startRecording() {
+            try {
+                // Reset UI
+                hideError();
+                resultArea.style.display = 'none';
+                fileInfo.style.display = 'none';
+                
+                // Request microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    }
+                });
+                
+                // Set up MediaRecorder
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'audio/webm;codecs=opus'
+                });
+                
+                recordingChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordingChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordingChunks, { type: 'audio/webm' });
+                    processRecordedAudio(blob);
+                };
+                
+                // Set up audio level monitoring
+                setupAudioLevelMonitoring(stream);
+                
+                // Start recording
+                mediaRecorder.start();
+                isRecording = true;
+                recordingStartTime = Date.now();
+                
+                // Update UI
+                recordBtn.textContent = '🔴 Optager...';
+                recordBtn.classList.add('recording');
+                recordingInfo.style.display = 'block';
+                
+                // Start timer
+                recordingInterval = setInterval(updateRecordingTime, 100);
+                
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                showError('Kan ikke få adgang til mikrofon. Tjek venligst tilladelser.');
+            }
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Clean up
+                if (recordingInterval) {
+                    clearInterval(recordingInterval);
+                    recordingInterval = null;
+                }
+                
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+                
+                // Update UI
+                recordBtn.textContent = '🎤 Start Optagelse';
+                recordBtn.classList.remove('recording');
+                recordingInfo.style.display = 'none';
+                
+                // Stop all tracks
+                if (microphone) {
+                    microphone.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+        
+        function setupAudioLevelMonitoring(stream) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            microphone = stream;
+            
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function updateLevel() {
+                if (isRecording) {
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    // Calculate average level
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / bufferLength;
+                    const level = (average / 255) * 100;
+                    
+                    recordingLevelFill.style.width = level + '%';
+                    requestAnimationFrame(updateLevel);
+                }
+            }
+            
+            updateLevel();
+        }
+        
+        function updateRecordingTime() {
+            if (isRecording) {
+                const elapsed = Date.now() - recordingStartTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                recordingTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        async function processRecordedAudio(blob) {
+            try {
+                // Create a File object from the blob
+                const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+                
+                // Show file info
+                fileName.textContent = 'Stemmeoptagelse';
+                fileSize.textContent = `${(blob.size / 1024 / 1024).toFixed(2)} MB`;
+                fileInfo.style.display = 'block';
+                
+                // Process the recording
+                await uploadFile(file);
+                
+            } catch (error) {
+                console.error('Error processing recorded audio:', error);
+                showError('Fejl ved behandling af den optagne lyd');
+            }
+        }
+        
+        // Check server health on load
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.model_loaded) {
+                    showError('Modellen indlæser stadig. Vent venligst et øjeblik og prøv igen.');
+                }
+            })
+            .catch(err => {
+                showError('Kan ikke forbinde til serveren. Tjek venligst om tjenesten kører.');
+            });
+    </script>
+</body>
+</html> 
