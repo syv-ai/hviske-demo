@@ -27,9 +27,6 @@ RUN apt-get update && apt-get install -y \
 # Create symbolic link for python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Upgrade pip
-RUN python3 -m pip install --upgrade pip --break-system-packages --force-reinstall
-
 # Copy requirements file
 COPY requirements.txt .
 
