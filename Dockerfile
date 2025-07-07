@@ -1,20 +1,27 @@
 # Use NVIDIA CUDA base image for GPU support
-FROM nvidia/cuda:12.9.1-cudnn-devel-ubi8
+FROM docker pull nvidia/cuda:12.9.1-cudnn-devel-ubuntu24.04
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Set environment variables to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Update package lists and install system dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-dev \
+    python3-venv \
     build-essential \
-    libsndfile1 \
+    libsndfile1-dev \
     ffmpeg \
     wget \
     curl \
     git \
+    ca-certificates \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Create symbolic link for python
