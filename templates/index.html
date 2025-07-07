@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tale Transskription Service</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,69 +14,113 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Space Grotesk', 'Arial Black', sans-serif;
+            background: #FF6B35;
+            background-image: 
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000),
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 107, 53, 0.9);
+            z-index: -1;
         }
         
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: #FFFF00;
+            border: 8px solid #000;
+            box-shadow: 12px 12px 0 #000;
             padding: 40px;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: #00F5FF;
+            z-index: -1;
         }
         
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            font-weight: 300;
+            color: #000;
+            margin-bottom: 40px;
+            font-size: 3.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            text-shadow: 4px 4px 0 #FF1493;
+            line-height: 0.9;
         }
         
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
+            border: 6px solid #000;
             padding: 60px 20px;
             text-align: center;
-            background: #f8f9ff;
-            transition: all 0.3s ease;
+            background: #00FF00;
             cursor: pointer;
             margin-bottom: 30px;
+            box-shadow: 8px 8px 0 #000;
+            transition: all 0.2s ease;
+            position: relative;
         }
         
         .upload-area:hover {
-            border-color: #764ba2;
-            background: #f0f1ff;
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 #000;
         }
         
         .upload-area.dragover {
-            border-color: #764ba2;
-            background: #e8eaff;
+            background: #FF69B4;
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 #000;
         }
         
         .upload-icon {
-            font-size: 4em;
-            color: #667eea;
+            font-size: 5em;
+            color: #000;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #FFFF00;
         }
         
         .upload-text {
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 10px;
+            font-size: 1.4em;
+            color: #000;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .upload-hint {
-            font-size: 0.9em;
-            color: #999;
-            margin-bottom: 20px;
+            font-size: 1em;
+            color: #000;
+            margin-bottom: 30px;
+            font-weight: 500;
+            background: #FFFF00;
+            padding: 10px;
+            border: 3px solid #000;
+            display: inline-block;
         }
         
         #fileInput {
@@ -82,125 +128,155 @@
         }
         
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1em;
+            background: #FF1493;
+            color: #000;
+            border: 4px solid #000;
+            padding: 16px 32px;
+            font-size: 1.1em;
             cursor: pointer;
-            transition: all 0.3s ease;
             margin: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 6px 6px 0 #000;
+            transition: all 0.2s ease;
+            font-family: 'Space Grotesk', sans-serif;
+            position: relative;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 #000;
+        }
+        
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
         }
         
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 6px 6px 0 #000;
         }
         
         .progress-bar {
             width: 100%;
-            height: 6px;
-            background: #eee;
-            border-radius: 3px;
-            overflow: hidden;
+            height: 16px;
+            background: #000;
+            border: 4px solid #000;
             margin: 20px 0;
             display: none;
+            box-shadow: 4px 4px 0 #000;
         }
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 3px;
+            background: #00FF00;
             transition: width 0.3s ease;
+            border-right: 2px solid #000;
         }
         
         .result-area {
             margin-top: 30px;
-            padding: 20px;
-            background: #f8f9ff;
-            border-radius: 15px;
+            padding: 30px;
+            background: #00F5FF;
+            border: 6px solid #000;
             display: none;
+            box-shadow: 8px 8px 0 #000;
         }
         
         .result-title {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 600;
+            font-size: 1.6em;
+            color: #000;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .transcription-text {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            font-size: 1.1em;
+            background: #FFFF00;
+            padding: 25px;
+            border: 4px solid #000;
+            font-size: 1.2em;
             line-height: 1.6;
-            color: #333;
-            min-height: 100px;
+            color: #000;
+            min-height: 120px;
             white-space: pre-wrap;
+            font-weight: 500;
+            box-shadow: 4px 4px 0 #000;
         }
         
         .file-info {
             margin-bottom: 20px;
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
+            padding: 20px;
+            background: #FF69B4;
+            border: 4px solid #000;
             display: none;
+            box-shadow: 6px 6px 0 #000;
         }
         
         .file-name {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+            font-size: 1.2em;
+            text-transform: uppercase;
         }
         
         .file-size {
-            color: #666;
-            font-size: 0.9em;
+            color: #000;
+            font-size: 1em;
+            font-weight: 600;
         }
         
         .error-message {
-            color: #e74c3c;
-            background: #ffeaea;
-            padding: 15px;
-            border-radius: 10px;
+            color: #000;
+            background: #FF4444;
+            padding: 20px;
             margin-top: 20px;
-            border: 1px solid #f5b2b2;
+            border: 4px solid #000;
             display: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            box-shadow: 6px 6px 0 #000;
         }
         
         .status-message {
             text-align: center;
             margin: 20px 0;
-            font-size: 1.1em;
-            color: #666;
+            font-size: 1.3em;
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #FFFF00;
+            padding: 15px;
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0 #000;
         }
         
         .copy-btn {
-            background: #27ae60;
-            font-size: 0.9em;
-            padding: 8px 16px;
-            margin-top: 10px;
+            background: #00FF00;
+            font-size: 1em;
+            padding: 12px 24px;
+            margin-top: 15px;
         }
         
         .copy-btn:hover {
-            background: #219a52;
+            background: #32CD32;
         }
         
         .divider {
-            margin: 20px 0;
-            color: #999;
-            font-size: 0.9em;
+            margin: 30px 0;
+            color: #000;
+            font-size: 1.2em;
+            font-weight: 700;
             position: relative;
+            text-transform: uppercase;
+            text-align: center;
         }
         
         .divider:before {
@@ -209,81 +285,162 @@
             top: 50%;
             left: 0;
             right: 0;
-            height: 1px;
-            background: #ddd;
+            height: 6px;
+            background: #000;
             z-index: 1;
         }
         
         .divider:after {
-            content: 'eller';
+            content: 'ELLER';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #f8f9ff;
-            padding: 0 15px;
+            background: #FFFF00;
+            padding: 6px 16px;
             z-index: 2;
+            border: 3px solid #000;
+            font-size: 0.9em;
+            letter-spacing: 2px;
         }
         
         .record-btn {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background: #FF4444;
+            animation: none;
         }
         
         .record-btn:hover {
-            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            background: #FF6666;
         }
         
         .record-btn.recording {
-            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
-            animation: pulse 2s infinite;
+            background: #00FF00;
+            animation: brutalist-pulse 1s infinite;
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes brutalist-pulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 6px 6px 0 #000;
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 8px 8px 0 #000;
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 6px 6px 0 #000;
+            }
         }
         
         .recording-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+            margin-top: 30px;
+            padding: 25px;
+            background: #FFFF00;
+            border: 6px solid #000;
             display: none;
             text-align: center;
+            box-shadow: 8px 8px 0 #000;
         }
         
         .recording-time {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #856404;
-            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 #FF1493;
         }
         
         .recording-level {
             width: 100%;
-            height: 8px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 15px;
+            height: 16px;
+            background: #000;
+            border: 4px solid #000;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0 #000;
         }
         
         .recording-level-fill {
             height: 100%;
-            background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
-            border-radius: 4px;
+            background: #00FF00;
             transition: width 0.1s ease;
+            border-right: 2px solid #000;
         }
         
-        @media (max-width: 600px) {
+        /* Glitch effect for title */
+        h1::before {
+            content: '🎙️ TALE TRANSSKRIPTION';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            color: #00FF00;
+            z-index: -1;
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 2px); }
+            4% { transform: translate(2px, -2px); }
+            6% { transform: translate(0); }
+            100% { transform: translate(0); }
+        }
+        
+        /* Brutalist focus styles */
+        .btn:focus,
+        .transcription-text:focus {
+            outline: 4px solid #FF1493;
+            outline-offset: 4px;
+        }
+        
+        /* Additional brutalist elements */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: #FF1493;
+            border: 3px solid #000;
+            transform: rotate(45deg);
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 50%;
+        }
+        
+        .upload-area::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #000;
+        }
+        
+        @media (max-width: 700px) {
             .container {
-                padding: 20px;
+                padding: 25px;
+                margin: 10px;
             }
             
             h1 {
-                font-size: 2em;
+                font-size: 2.5em;
+                margin-bottom: 30px;
             }
             
             .upload-area {
@@ -291,17 +448,43 @@
             }
             
             .btn {
-                padding: 10px 20px;
-                font-size: 0.9em;
-                margin: 5px;
+                padding: 14px 24px;
+                font-size: 1em;
+                margin: 8px;
             }
             
             .recording-info {
-                padding: 10px;
+                padding: 20px;
             }
             
             .recording-time {
+                font-size: 2em;
+            }
+            
+            .upload-icon {
+                font-size: 4em;
+            }
+            
+            .upload-text {
+                font-size: 1.2em;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .upload-icon {
+                font-size: 3em;
+            }
+            
+            .upload-text {
                 font-size: 1.1em;
+            }
+            
+            .recording-time {
+                font-size: 1.8em;
             }
         }
     </style>
@@ -318,7 +501,7 @@
                 Vælg Fil
             </button>
             <div class="divider">eller</div>
-            <button class="btn record-btn" id="recordBtn" onclick="toggleRecording()">
+            <button class="btn record-btn" id="recordBtn" onclick="toggleRecording(event)">
                 🎤 Start Optagelse
             </button>
         </div>
@@ -330,7 +513,7 @@
             <div class="recording-level">
                 <div class="recording-level-fill" id="recordingLevelFill"></div>
             </div>
-            <button class="btn" onclick="stopRecording()">
+            <button class="btn" onclick="stopRecording(event)">
                 🛑 Stop Optagelse
             </button>
         </div>
@@ -498,7 +681,12 @@
         }
         
         // Recording functions
-        async function toggleRecording() {
+        async function toggleRecording(event) {
+            // Prevent the click from bubbling up to the upload area
+            if (event) {
+                event.stopPropagation();
+            }
+            
             if (isRecording) {
                 stopRecording();
             } else {
@@ -562,7 +750,12 @@
             }
         }
         
-        function stopRecording() {
+        function stopRecording(event) {
+            // Prevent the click from bubbling up to the upload area
+            if (event) {
+                event.stopPropagation();
+            }
+            
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
